@@ -17,10 +17,3 @@ function copy(fromDir, toDir, filter) {
 fs.rmSync(path.join(root, "dist/ai/providers/data"), { recursive: true, force: true });
 copy("src/ai/providers/data", "dist/ai/providers/data", (n) => n.endsWith(".json"));
 
-// pi-coding-agent: themes, interactive assets, HTML export templates
-copy("src/coding-agent/modes/interactive/theme", "dist/coding-agent/modes/interactive/theme", (n) => n.endsWith(".json"));
-copy("src/coding-agent/modes/interactive/assets", "dist/coding-agent/modes/interactive/assets", (n) => n.endsWith(".png"));
-copy("src/coding-agent/core/export-html", "dist/coding-agent/core/export-html", (n) =>
-	["template.html", "template.css", "template.js"].includes(n),
-);
-copy("src/coding-agent/core/export-html/vendor", "dist/coding-agent/core/export-html/vendor", (n) => n.endsWith(".js"));

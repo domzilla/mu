@@ -4,7 +4,6 @@ import { resolvePath } from "../utils/paths.ts";
 import type { AgentSession } from "./agent-session.ts";
 import type { AgentSessionRuntimeDiagnostic, AgentSessionServices } from "./agent-session-services.ts";
 import type {
-	ProjectTrustContext,
 	ReplacedSessionContext,
 	SessionShutdownEvent,
 	SessionStartEvent,
@@ -37,7 +36,6 @@ export type CreateAgentSessionRuntimeFactory = (options: {
 	agentDir: string;
 	sessionManager: SessionManager;
 	sessionStartEvent?: SessionStartEvent;
-	projectTrustContext?: ProjectTrustContext;
 }) => Promise<CreateAgentSessionRuntimeResult>;
 
 /**
@@ -198,7 +196,6 @@ export class AgentSessionRuntime {
 		options?: {
 			cwdOverride?: string;
 			withSession?: (ctx: ReplacedSessionContext) => Promise<void>;
-			projectTrustContextFactory?: (cwd: string) => ProjectTrustContext;
 		},
 	): Promise<{ cancelled: boolean }> {
 		const beforeResult = await this.emitBeforeSwitch("resume", sessionPath);
@@ -216,7 +213,6 @@ export class AgentSessionRuntime {
 				agentDir: this.services.agentDir,
 				sessionManager,
 				sessionStartEvent: { type: "session_start", reason: "resume", previousSessionFile },
-				projectTrustContext: options?.projectTrustContextFactory?.(sessionManager.getCwd()),
 			}),
 		);
 		await this.finishSessionReplacement(options?.withSession);

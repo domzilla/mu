@@ -9,7 +9,6 @@ import {
 	DefaultResourceLoader,
 	type DefaultResourceLoaderOptions,
 	type ResourceLoader,
-	type ResourceLoaderReloadOptions,
 } from "./resource-loader.ts";
 import { type CreateAgentSessionOptions, type CreateAgentSessionResult, createAgentSession } from "./sdk.ts";
 import type { SessionManager } from "./session-manager.ts";
@@ -42,7 +41,6 @@ export interface CreateAgentSessionServicesOptions {
 	modelRuntimeSignal?: AbortSignal;
 	extensionFlagValues?: Map<string, boolean | string>;
 	resourceLoaderOptions?: Omit<DefaultResourceLoaderOptions, "cwd" | "agentDir" | "settingsManager">;
-	resourceLoaderReloadOptions?: ResourceLoaderReloadOptions;
 }
 
 /**
@@ -151,7 +149,7 @@ export async function createAgentSessionServices(
 		agentDir,
 		settingsManager,
 	});
-	await resourceLoader.reload(options.resourceLoaderReloadOptions);
+	await resourceLoader.reload();
 
 	const diagnostics: AgentSessionRuntimeDiagnostic[] = [];
 	const extensionsResult = resourceLoader.getExtensions();

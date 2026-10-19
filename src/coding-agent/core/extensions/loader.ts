@@ -5,7 +5,6 @@
 
 import * as path from "node:path";
 import type { Provider } from "../../../ai/index.ts";
-import type { KeyId } from "../../../tui/index.ts";
 import { resolvePath } from "../../utils/paths.ts";
 import type { EventBus } from "../event-bus.ts";
 import type { ExecOptions } from "../exec.ts";
@@ -13,13 +12,10 @@ import { execCommand } from "../exec.ts";
 import { createSyntheticSourceInfo } from "../source-info.ts";
 import { time } from "../timings.ts";
 import type {
-	EntryRenderer,
 	Extension,
 	ExtensionAPI,
 	ExtensionFactory,
 	ExtensionRuntime,
-	MarkdownTransformer,
-	MessageRenderer,
 	ProviderConfig,
 	RegisteredCommand,
 	ToolDefinition,
@@ -139,17 +135,6 @@ function createExtensionAPI(
 			});
 		},
 
-		registerShortcut(
-			shortcut: KeyId,
-			options: {
-				description?: string;
-				handler: (ctx: import("./types.ts").ExtensionContext) => Promise<void> | void;
-			},
-		): void {
-			runtime.assertActive();
-			extension.shortcuts.set(shortcut, { shortcut, extensionPath: extension.path, ...options });
-		},
-
 		registerFlag(
 			name: string,
 			options: { description?: string; type: "boolean" | "string"; default?: boolean | string },
@@ -159,22 +144,6 @@ function createExtensionAPI(
 			if (options.default !== undefined && !runtime.flagValues.has(name)) {
 				runtime.flagValues.set(name, options.default);
 			}
-		},
-
-		registerMessageRenderer<T>(customType: string, renderer: MessageRenderer<T>): void {
-			runtime.assertActive();
-			extension.messageRenderers.set(customType, renderer as MessageRenderer);
-		},
-
-		registerMarkdownTransformer(transformer: MarkdownTransformer): void {
-			runtime.assertActive();
-			extension.markdownTransformer = transformer;
-		},
-
-		registerEntryRenderer<T>(customType: string, renderer: EntryRenderer<T>): void {
-			runtime.assertActive();
-			extension.entryRenderers ??= new Map();
-			extension.entryRenderers.set(customType, renderer as EntryRenderer);
 		},
 
 		// Flag access - checks extension registered it, reads from runtime
@@ -301,11 +270,8 @@ function createExtension(extensionPath: string, resolvedPath: string): Extension
 		sourceInfo: createSyntheticSourceInfo(extensionPath, { source, baseDir }),
 		handlers: new Map(),
 		tools: new Map(),
-		messageRenderers: new Map(),
-		entryRenderers: new Map(),
 		commands: new Map(),
 		flags: new Map(),
-		shortcuts: new Map(),
 	};
 }
 

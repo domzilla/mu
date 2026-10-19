@@ -12,9 +12,14 @@ import {
 } from "../../ai/index.ts";
 import chalk from "chalk";
 import { minimatch } from "minimatch";
-import { isValidThinkingLevel } from "../cli/args.ts";
 import { DEFAULT_THINKING_LEVEL } from "./defaults.ts";
 import type { ModelRuntime } from "./model-runtime.ts";
+
+const VALID_THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "xhigh", "max"] as const;
+
+function isValidThinkingLevel(level: string): level is ThinkingLevel {
+	return VALID_THINKING_LEVELS.includes(level as ThinkingLevel);
+}
 
 /** Default model IDs for each known provider */
 export const defaultModelPerProvider: Record<KnownProvider, string> = {
