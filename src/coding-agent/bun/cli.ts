@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { registerBunOAuthFlows } from "@earendil-works/pi-ai/bun-oauth";
+import { registerBunOAuthFlows } from "../../ai/bun-oauth.ts";
 import { APP_NAME } from "../config.ts";
 
 process.title = APP_NAME;
