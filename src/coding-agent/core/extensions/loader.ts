@@ -7,13 +7,13 @@ import * as fs from "node:fs";
 import { createRequire } from "node:module";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import * as _bundledPiAgentCore from "@earendil-works/pi-agent-core";
-import type { Provider } from "@earendil-works/pi-ai";
-import * as _bundledPiAiCompat from "@earendil-works/pi-ai/compat";
-import * as _bundledPiAiOauth from "@earendil-works/pi-ai/oauth";
-import * as _bundledPiAiProviders from "@earendil-works/pi-ai/providers/all";
-import type { KeyId } from "@earendil-works/pi-tui";
-import * as _bundledPiTui from "@earendil-works/pi-tui";
+import * as _bundledPiAgentCore from "../../../agent-core/index.ts";
+import type { Provider } from "../../../ai/index.ts";
+import * as _bundledPiAiCompat from "../../../ai/compat.ts";
+import * as _bundledPiAiOauth from "../../../ai/oauth.ts";
+import * as _bundledPiAiProviders from "../../../ai/providers/all.ts";
+import type { KeyId } from "../../../tui/index.ts";
+import * as _bundledPiTui from "../../../tui/index.ts";
 import { createJiti } from "jiti/static";
 // Static imports of packages that extensions may use.
 // These MUST be static so Bun bundles them into the compiled binary.
@@ -93,27 +93,19 @@ function getAliases(): Record<string, string> {
 	const typeboxCompileEntry = require.resolve("typebox/compile");
 	const typeboxValueEntry = require.resolve("typebox/value");
 
-	const packagesRoot = path.resolve(__dirname, "../../../../");
-	const resolveWorkspaceOrImport = (workspaceRelativePath: string, specifier: string): string => {
-		const workspacePath = path.join(packagesRoot, workspaceRelativePath);
-		if (fs.existsSync(workspacePath)) {
-			return workspacePath;
-		}
-		return fileURLToPath(import.meta.resolve(specifier));
-	};
+	// mu: sibling modules live next to coding-agent in the same dist/ tree.
+	const distRoot = path.resolve(__dirname, "../../..");
+	const resolveSibling = (relativePath: string): string => path.join(distRoot, relativePath);
 
 	const piCodingAgentEntry = packageIndex;
-	const piAgentCoreEntry = resolveWorkspaceOrImport("agent/dist/index.js", "@earendil-works/pi-agent-core");
-	const piTuiEntry = resolveWorkspaceOrImport("tui/dist/index.js", "@earendil-works/pi-tui");
+	const piAgentCoreEntry = resolveSibling("agent-core/index.js");
+	const piTuiEntry = resolveSibling("tui/index.js");
 	// Extensions resolve the pi-ai root to the compat entrypoint (a strict
 	// superset of the core entrypoint): existing extensions using the old
 	// global API keep working at runtime until compat is removed.
-	const piAiCompatEntry = resolveWorkspaceOrImport("ai/dist/compat.js", "@earendil-works/pi-ai/compat");
-	const piAiOauthEntry = resolveWorkspaceOrImport("ai/dist/oauth.js", "@earendil-works/pi-ai/oauth");
-	const piAiProvidersEntry = resolveWorkspaceOrImport(
-		"ai/dist/providers/all.js",
-		"@earendil-works/pi-ai/providers/all",
-	);
+	const piAiCompatEntry = resolveSibling("ai/compat.js");
+	const piAiOauthEntry = resolveSibling("ai/oauth.js");
+	const piAiProvidersEntry = resolveSibling("ai/providers/all.js");
 
 	_aliases = {
 		"@earendil-works/pi-coding-agent": piCodingAgentEntry,

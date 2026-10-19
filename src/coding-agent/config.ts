@@ -400,7 +400,7 @@ export function getThemesDir(): string {
 	// Theme is in modes/interactive/theme/ relative to src/ or dist/
 	const packageDir = getPackageDir();
 	const srcOrDist = existsSync(join(packageDir, "src")) ? "src" : "dist";
-	return join(packageDir, srcOrDist, "modes", "interactive", "theme");
+	return join(packageDir, srcOrDist, "coding-agent", "modes", "interactive", "theme");
 }
 
 /**
@@ -415,7 +415,7 @@ export function getExportTemplateDir(): string {
 	}
 	const packageDir = getPackageDir();
 	const srcOrDist = existsSync(join(packageDir, "src")) ? "src" : "dist";
-	return join(packageDir, srcOrDist, "core", "export-html");
+	return join(packageDir, srcOrDist, "coding-agent", "core", "export-html");
 }
 
 /** Get path to package.json */
@@ -455,7 +455,7 @@ export function getInteractiveAssetsDir(): string {
 	}
 	const packageDir = getPackageDir();
 	const srcOrDist = existsSync(join(packageDir, "src")) ? "src" : "dist";
-	return join(packageDir, srcOrDist, "modes", "interactive", "assets");
+	return join(packageDir, srcOrDist, "coding-agent", "modes", "interactive", "assets");
 }
 
 /** Get path to a bundled interactive asset */
@@ -470,6 +470,11 @@ export function getBundledInteractiveAssetPath(name: string): string {
 interface PackageJson {
 	name?: string;
 	version?: string;
+	/** mu: upstream identity of the coding-agent package, reported instead of mu's own name/version. */
+	piUpstream?: {
+		name?: string;
+		version?: string;
+	};
 	piConfig?: {
 		name?: string;
 		configDir?: string;
@@ -485,11 +490,11 @@ try {
 }
 
 const piConfigName: string | undefined = pkg.piConfig?.name;
-export const PACKAGE_NAME: string = pkg.name || "@earendil-works/pi-coding-agent";
+export const PACKAGE_NAME: string = pkg.piUpstream?.name || pkg.name || "@earendil-works/pi-coding-agent";
 export const APP_NAME: string = piConfigName || "pi";
 export const APP_TITLE: string = piConfigName ? APP_NAME : "π";
 export const CONFIG_DIR_NAME: string = pkg.piConfig?.configDir || ".pi";
-export const VERSION: string = pkg.version || "0.0.0";
+export const VERSION: string = pkg.piUpstream?.version || pkg.version || "0.0.0";
 
 // e.g., PI_CODING_AGENT_DIR or TAU_CODING_AGENT_DIR
 export const ENV_AGENT_DIR = `${APP_NAME.toUpperCase()}_CODING_AGENT_DIR`;
