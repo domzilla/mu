@@ -1,6 +1,5 @@
 import type { ThinkingLevel } from "../../agent-core/index.ts";
 import type { Transport } from "../../ai/index.ts";
-import type { TuiMode as RendererTuiMode, ScrollViewScrollbar } from "../../tui/index.ts";
 import { randomUUID } from "crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
@@ -33,7 +32,8 @@ export interface RetrySettings {
 	provider?: ProviderRetrySettings;
 }
 
-export type TuiMode = RendererTuiMode;
+export type TuiMode = "regular" | "fullscreen";
+export type ScrollViewScrollbar = "hidden" | "auto" | "always";
 export type FullscreenExitOutput = "transcript" | "resume-hint";
 
 export interface TerminalSettings {
