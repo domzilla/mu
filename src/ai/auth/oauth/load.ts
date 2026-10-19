@@ -14,11 +14,6 @@ const importOAuthModule = (specifier: string): Promise<unknown> => {
 type OAuthFlowLoaders = {
 	anthropic: () => OAuthAuth | Promise<OAuthAuth>;
 	openaiCodex: () => OAuthAuth | Promise<OAuthAuth>;
-	githubCopilot: () => OAuthAuth | Promise<OAuthAuth>;
-	openrouter: () => OAuthAuth | Promise<OAuthAuth>;
-	kimiCoding: () => OAuthAuth | Promise<OAuthAuth>;
-	xai: () => OAuthAuth | Promise<OAuthAuth>;
-	radius: (options: { name: string; gateway: string }) => OAuthAuth | Promise<OAuthAuth>;
 };
 
 let bundledLoaders: OAuthFlowLoaders | undefined;
@@ -38,31 +33,16 @@ export const loadOpenAICodexOAuth = async (): Promise<OAuthAuth> => {
 	return ((await importOAuthModule("./openai-codex.ts")) as { openaiCodexOAuth: OAuthAuth }).openaiCodexOAuth;
 };
 
-export const loadGitHubCopilotOAuth = async (): Promise<OAuthAuth> => {
-	if (bundledLoaders) return bundledLoaders.githubCopilot();
-	return ((await importOAuthModule("./github-copilot.ts")) as { githubCopilotOAuth: OAuthAuth }).githubCopilotOAuth;
-};
+/** Loader for an OAuth flow mu does not ship: the provider keeps advertising OAuth, but using it fails. */
+const unavailableOAuth =
+	(name: string) =>
+	async (..._args: unknown[]): Promise<OAuthAuth> => {
+		throw new Error(`OAuth flow "${name}" is not available in mu`);
+	};
 
-export const loadOpenRouterOAuth = async (): Promise<OAuthAuth> => {
-	if (bundledLoaders) return bundledLoaders.openrouter();
-	return ((await importOAuthModule("./openrouter.ts")) as { openRouterOAuth: OAuthAuth }).openRouterOAuth;
-};
-
-export const loadKimiCodingOAuth = async (): Promise<OAuthAuth> => {
-	if (bundledLoaders) return bundledLoaders.kimiCoding();
-	return ((await importOAuthModule("./kimi-coding.ts")) as { kimiCodingOAuth: OAuthAuth }).kimiCodingOAuth;
-};
-
-export const loadXaiOAuth = async (): Promise<OAuthAuth> => {
-	if (bundledLoaders) return bundledLoaders.xai();
-	return ((await importOAuthModule("./xai.ts")) as { xaiOAuth: OAuthAuth }).xaiOAuth;
-};
-
-export const loadRadiusOAuth = async (options: { name: string; gateway: string }): Promise<OAuthAuth> => {
-	if (bundledLoaders) return bundledLoaders.radius(options);
-	return (
-		(await importOAuthModule("./radius.ts")) as {
-			createRadiusOAuth: (input: { name: string; gateway: string }) => OAuthAuth;
-		}
-	).createRadiusOAuth(options);
-};
+export const loadGitHubCopilotOAuth = unavailableOAuth("github-copilot");
+export const loadOpenRouterOAuth = unavailableOAuth("openrouter");
+export const loadKimiCodingOAuth = unavailableOAuth("kimi-coding");
+export const loadXaiOAuth = unavailableOAuth("xai");
+export const loadRadiusOAuth: (options: { name: string; gateway: string }) => Promise<OAuthAuth> =
+	unavailableOAuth("radius");
