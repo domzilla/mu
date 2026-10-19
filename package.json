@@ -1,7 +1,7 @@
 {
 	"name": "mu",
 	"version": "0.84.2-mu.1",
-	"description": "Trimmed single-package fork of the Pi agent framework (pi-ai, pi-agent-core, pi-coding-agent)",
+	"description": "mu - a minimal headless agent runtime/SDK trimmed from pi",
 	"private": true,
 	"type": "module",
 	"license": "MIT",
@@ -9,7 +9,6 @@
 		"configDir": ".pi"
 	},
 	"piUpstream": {
-		"name": "@earendil-works/pi-coding-agent",
 		"version": "0.84.2"
 	},
 	"exports": {
