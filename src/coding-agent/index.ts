@@ -152,7 +152,6 @@ export type {
 export {
 	createExtensionRuntime,
 	defineTool,
-	discoverAndLoadExtensions,
 	ExtensionRunner,
 	isBashToolResult,
 	isEditToolResult,
