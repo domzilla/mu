@@ -1,4 +1,4 @@
 import type { ProviderStreams } from "../types.ts";
-import { lazyApi } from "./lazy.ts";
+import { unavailableApi } from "./lazy.ts";
 
-export const openAICompletionsApi = (): ProviderStreams => lazyApi(() => import("./openai-completions.ts"));
+export const openAICompletionsApi = (): ProviderStreams => unavailableApi("openai-completions");

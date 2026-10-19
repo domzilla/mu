@@ -96,3 +96,11 @@ export function lazyApi(load: () => Promise<ProviderStreams>, capabilities?: Laz
 
 	return api;
 }
+
+/**
+ * `ProviderStreams` for an API whose implementation mu does not ship. Model and
+ * provider metadata stay listed; every request ends with an error event.
+ */
+export function unavailableApi(api: Api): ProviderStreams {
+	return lazyApi(() => Promise.reject(new Error(`API "${api}" is not available in mu`)));
+}

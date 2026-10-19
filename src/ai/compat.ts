@@ -2,7 +2,7 @@
  * Temporary compatibility entrypoint preserving the old global pi-ai API
  * surface: api-dispatch `stream()`/`complete()` with env API key injection,
  * the api-registry, generated catalog reads (`getModel`/`getModels`/
- * `getProviders`), per-API lazy stream wrappers, and image generation.
+ * `getProviders`) and per-API lazy stream wrappers.
  *
  * Existing apps switch imports from "./index.ts" to
  * "@earendil-works/pi-ai/compat" unchanged; new code uses `createModels()`
@@ -21,12 +21,7 @@ export * from "./api/openai-completions.lazy.ts";
 export * from "./api/openai-responses.lazy.ts";
 export * from "./api/pi-messages.lazy.ts";
 export * from "./env-api-keys.ts";
-export * from "./image-models.ts";
-export * from "./images.ts";
-export * from "./images-api-registry.ts";
 export * from "./index.ts";
-export * from "./legacy-api-aliases.ts";
-export * from "./providers/images/register-builtins.ts";
 
 import { anthropicMessagesApi } from "./api/anthropic-messages.lazy.ts";
 import { azureOpenAIResponsesApi } from "./api/azure-openai-responses.lazy.ts";
@@ -44,7 +39,6 @@ import { builtinModels, getBuiltinModel, getBuiltinModels, getBuiltinProviders }
 
 export type { BuiltinProvider } from "./providers/all.ts";
 
-import { createFauxCore, type FauxProviderRegistration, type RegisterFauxProviderOptions } from "./providers/faux.ts";
 import type {
 	Api,
 	ApiStreamOptions,
@@ -155,24 +149,6 @@ export function unregisterApiProviders(sourceId: string): void {
 
 function clearApiProviders(): void {
 	apiProviderRegistry.clear();
-}
-
-export function registerFauxProvider(options: RegisterFauxProviderOptions = {}): FauxProviderRegistration {
-	const core = createFauxCore(options);
-	const sourceId = `faux-provider-${Math.random().toString(36).slice(2, 10)}`;
-	registerApiProvider({ api: core.api, stream: core.stream, streamSimple: core.streamSimple }, sourceId);
-	return {
-		api: core.api,
-		models: core.models,
-		getModel: core.getModel,
-		state: core.state,
-		setResponses: core.setResponses,
-		appendResponses: core.appendResponses,
-		getPendingResponseCount: core.getPendingResponseCount,
-		unregister() {
-			unregisterApiProviders(sourceId);
-		},
-	};
 }
 
 const BUILTIN_APIS: [Api, ProviderStreams][] = [

@@ -1,4 +1,4 @@
 import type { ProviderStreams } from "../types.ts";
-import { lazyApi } from "./lazy.ts";
+import { unavailableApi } from "./lazy.ts";
 
-export const mistralConversationsApi = (): ProviderStreams => lazyApi(() => import("./mistral-conversations.ts"));
+export const mistralConversationsApi = (): ProviderStreams => unavailableApi("mistral-conversations");
