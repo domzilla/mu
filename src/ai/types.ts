@@ -1,4 +1,3 @@
-import type { TelemetryContext } from "../telemetry/index.ts";
 import type { AnthropicOptions } from "./api/anthropic-messages.ts";
 import type { OpenAICodexResponsesOptions } from "./api/openai-codex-responses.ts";
 import type { OpenAIResponsesOptions } from "./api/openai-responses.ts";
@@ -6,6 +5,30 @@ import type { AssistantMessageDiagnostic } from "./utils/diagnostics.ts";
 import type { AssistantMessageEventStream } from "./utils/event-stream.ts";
 
 export type { AssistantMessageEventStream } from "./utils/event-stream.ts";
+
+// Telemetry context shape (from pi's telemetry package, which mu does not ship).
+type AttributeValue = string | number | boolean | readonly string[] | readonly number[] | readonly boolean[];
+
+interface SpanAttributes {
+	[name: string]: AttributeValue | undefined;
+}
+
+interface SpanOptions {
+	name: string;
+	attributes?: SpanAttributes;
+}
+
+type SpanStatus = { status: "ok" } | { status: "error"; error?: { name: string; message: string } };
+
+export interface TelemetryContext {
+	startSpan<T>(options: SpanOptions, callback: (span: TelemetrySpan) => T | Promise<T>): Promise<T>;
+}
+
+export interface TelemetrySpan extends TelemetryContext {
+	addEvent(name: string, attributes?: SpanAttributes): void;
+	setAttributes(attributes: SpanAttributes): void;
+	setStatus(status: SpanStatus): void;
+}
 
 export type KnownApi =
 	| "openai-completions"
