@@ -1,19 +1,16 @@
 # mu
 
-mu is a minimal, headless agent runtime and SDK trimmed from [pi](https://github.com/earendil-works/pi) v0.84.2. It
-keeps pi's model layer, agent loop and session runtime and drops the interactive application around them.
+mu is a minimal, headless agent runtime and SDK forked from [pi](https://github.com/earendil-works/pi): model layer,
+agent loop and session runtime, without an interactive application.
 
-## Relation to pi
+## Upstream
 
-- The `upstream` git remote points at pi. Kept files retain their upstream paths and edits inside them stay small,
-  so upstream fixes can be cherry-picked. Port only changes to code that still exists here.
-- `src/ai`, `src/agent-core` and `src/coding-agent` correspond to the pi packages pi-ai, pi-agent-core and
-  pi-coding-agent.
+The `upstream` git remote points at pi. Kept files retain their upstream paths and edits inside them stay small, so
+upstream fixes can be cherry-picked. Port only changes to code that exists here.
 
 ## Model catalog
 
-The catalogs of the usable providers (`anthropic`, `openai`, `openai-codex`) are synced from published pi-ai
-releases. All other providers stay frozen at 0.84.2.
+The catalogs of providers mu can serve are synced from published pi-ai releases:
 
 ```bash
 npm run sync-models -- --dry-run    # show the diff, write nothing
