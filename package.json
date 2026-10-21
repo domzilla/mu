@@ -20,6 +20,10 @@
 			"types": "./dist/ai/oauth.d.ts",
 			"import": "./dist/ai/oauth.js"
 		},
+		"./ai/oauth-flows": {
+			"types": "./dist/ai/oauth-flows.d.ts",
+			"import": "./dist/ai/oauth-flows.js"
+		},
 		"./ai/bun-oauth": {
 			"types": "./dist/ai/bun-oauth.d.ts",
 			"import": "./dist/ai/bun-oauth.js"

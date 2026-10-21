@@ -60,7 +60,7 @@ OpenAI-compatible providers (OpenRouter, Groq, Cerebras, xAI, DeepSeek, Together
 Bedrock, Azure and Radius unusable for requests. The stubs live in `src/ai/api/*.lazy.ts` (via `unavailableApi()`
 in `src/ai/api/lazy.ts`).
 
-Only the `anthropic` and `openai-codex` OAuth flows ship, and `registerBunOAuthFlows()` registers just those two.
+Only the `anthropic` and `openai-codex` OAuth flows ship, and `registerOAuthFlows()` registers just those two.
 GitHub Copilot, OpenRouter, Kimi, xAI and Radius still advertise OAuth, but login, refresh and token use fail with
 `OAuth flow "<name>" is not available in mu`.
 
@@ -76,7 +76,8 @@ sessions, compaction and the built-in tools work as they do in pi.
 |---|---|
 | `mu/ai` | Models, providers, streaming, credentials |
 | `mu/ai/oauth` | OAuth types |
-| `mu/ai/bun-oauth` | `registerBunOAuthFlows()`, which registers the bundled OAuth flow loaders |
+| `mu/ai/oauth-flows` | `registerOAuthFlows()`, which registers the shipped OAuth flows statically for bundled builds |
+| `mu/ai/bun-oauth` | `registerBunOAuthFlows()`, a deprecated alias of `registerOAuthFlows()` |
 | `mu/ai/providers/anthropic` | Anthropic provider |
 | `mu/ai/providers/openai-codex` | OpenAI Codex provider |
 | `mu/agent-core` | `Agent`, agent loop, message and tool types |

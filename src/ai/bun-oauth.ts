@@ -1,11 +1,10 @@
-import { anthropicOAuth } from "./auth/oauth/anthropic.ts";
-import { registerBundledOAuthFlowLoaders } from "./auth/oauth/load.ts";
-import { openaiCodexOAuth } from "./auth/oauth/openai-codex.ts";
+import { registerOAuthFlows } from "./oauth-flows.ts";
 
-/** Register OAuth flows statically embedded in the standalone Bun binary. */
+/**
+ * Register OAuth flows statically embedded in the standalone Bun binary.
+ *
+ * @deprecated Use `registerOAuthFlows()` from `mu/ai/oauth-flows`, which works for any bundler.
+ */
 export function registerBunOAuthFlows(): void {
-	registerBundledOAuthFlowLoaders({
-		anthropic: () => anthropicOAuth,
-		openaiCodex: () => openaiCodexOAuth,
-	});
+	registerOAuthFlows();
 }
