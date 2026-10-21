@@ -852,6 +852,15 @@ async function listSessionsFromDir(
  * Use buildSessionContext() to get the resolved message list for the LLM, which
  * handles compaction summaries and follows the path from root to current leaf.
  */
+/** A message accepted by {@link SessionManager.appendMessage}. */
+export type AppendableMessage = Message | CustomMessage | BashExecutionMessage;
+
+/**
+ * Hook run by {@link SessionManager.appendMessage} before a message is stored.
+ * Return the message to store (the same object or a replacement), or `undefined` to skip it.
+ */
+export type BeforeAppendMessageHook = (message: AppendableMessage) => AppendableMessage | undefined;
+
 export class SessionManager {
 	private sessionId: string = "";
 	private sessionFile: string | undefined;
@@ -864,6 +873,7 @@ export class SessionManager {
 	private labelsById: Map<string, string> = new Map();
 	private labelTimestampsById: Map<string, string> = new Map();
 	private leafId: string | null = null;
+	private beforeAppendMessage: BeforeAppendMessageHook | undefined;
 
 	private constructor(
 		cwd: string,
@@ -1053,8 +1063,14 @@ export class SessionManager {
 	 * Reason: we want these to be top-level entries in the session, not message session entries,
 	 * so it is easier to find them.
 	 * These need to be appended via appendCompaction() and appendBranchSummary() methods.
+	 * Returns undefined when the before-append hook skips the message (see setBeforeAppendMessage()).
 	 */
-	appendMessage(message: Message | CustomMessage | BashExecutionMessage): string {
+	appendMessage(message: Message | CustomMessage | BashExecutionMessage): string | undefined {
+		if (this.beforeAppendMessage) {
+			const next = this.beforeAppendMessage(message);
+			if (!next) return undefined;
+			message = next;
+		}
 		const entry: SessionMessageEntry = {
 			type: "message",
 			id: generateId(this.byId),
@@ -1064,6 +1080,17 @@ export class SessionManager {
 		};
 		this._appendEntry(entry);
 		return entry.id;
+	}
+
+	/**
+	 * Set or clear (with `undefined`) the hook that {@link appendMessage} runs before storing each message.
+	 * appendMessage() is the only method that appends message entries, so the hook sees every new message
+	 * (custom message entries, compactions and branch summaries are separate entry types and bypass it).
+	 * The hook may call appendMessage() itself, e.g. to store messages ahead of the current one; nested
+	 * calls run the hook too.
+	 */
+	setBeforeAppendMessage(hook: BeforeAppendMessageHook | undefined): void {
+		this.beforeAppendMessage = hook;
 	}
 
 	/** Append a thinking level change as child of current leaf, then advance leaf. Returns entry id. */

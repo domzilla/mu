@@ -178,6 +178,8 @@ export {
 	type PromptTemplate,
 } from "./core/sdk.ts";
 export {
+	type AppendableMessage,
+	type BeforeAppendMessageHook,
 	type BranchSummaryEntry,
 	buildContextEntries,
 	buildSessionContext,
