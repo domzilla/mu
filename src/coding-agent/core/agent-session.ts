@@ -936,6 +936,17 @@ export class AgentSession {
 		this.agent.state.systemPrompt = this._systemPromptOverride ?? this._baseSystemPrompt;
 	}
 
+	/**
+	 * Rebuild the base system prompt from the resource loader's current resources and the
+	 * active tools, e.g. after `DefaultResourceLoader.setSystemPrompt()`. `prompt()` and the
+	 * next-turn refresh always use the base prompt, so assigning `agent.state.systemPrompt`
+	 * directly does not persist. Takes effect on the next agent turn.
+	 */
+	refreshSystemPrompt(): void {
+		this._baseSystemPrompt = this._rebuildSystemPrompt(this.getActiveToolNames());
+		this.agent.state.systemPrompt = this._systemPromptOverride ?? this._baseSystemPrompt;
+	}
+
 	/** Whether compaction or branch summarization is currently running */
 	get isCompacting(): boolean {
 		return (

@@ -272,6 +272,20 @@ export class DefaultResourceLoader implements ResourceLoader {
 		return this.systemPrompt;
 	}
 
+	/**
+	 * Replace the system prompt source (text or file path, as the `systemPrompt` option) and
+	 * re-resolve it without a full reload. A session built on this loader picks it up after
+	 * `AgentSession.refreshSystemPrompt()`.
+	 */
+	setSystemPrompt(systemPrompt: string | undefined): void {
+		this.systemPromptSource = systemPrompt;
+		const systemPromptSource = this.systemPromptSource ?? this.discoverSystemPromptFile();
+		const baseSystemPrompt = resolvePromptInput(systemPromptSource, "system prompt");
+		this.systemPrompt = this.systemPromptOverride ? this.systemPromptOverride(baseSystemPrompt) : baseSystemPrompt;
+		this.systemPromptSourcePath =
+			systemPromptSource && existsSync(systemPromptSource) ? resolvePath(systemPromptSource) : undefined;
+	}
+
 	getSystemPromptSource(): { path: string } | undefined {
 		return this.systemPromptSourcePath ? { path: this.systemPromptSourcePath } : undefined;
 	}
