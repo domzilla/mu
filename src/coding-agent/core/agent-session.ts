@@ -1104,6 +1104,11 @@ export class AgentSession {
 			return true;
 		}
 
+		// An aborted run stays stopped; queued messages wait for the next prompt.
+		if (msg.stopReason === "aborted") {
+			return false;
+		}
+
 		// The agent loop drains both queues before emitting agent_end. Any messages
 		// here were queued by agent_end extension handlers and need a continuation.
 		return this.agent.hasQueuedMessages();
