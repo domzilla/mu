@@ -70,6 +70,18 @@ dependencies.
 AGENTS.md/CLAUDE.md context files, `SYSTEM.md`/`APPEND_SYSTEM.md`, settings, auth and model registries,
 sessions, compaction and the built-in tools work as they do in pi.
 
+## Additions
+
+APIs mu adds on top of pi:
+
+- `registerOAuthFlows()` (`mu/ai/oauth-flows`): registers the shipped OAuth flows through static imports so they
+  resolve in bundled builds. `registerBunOAuthFlows()` (`mu/ai/bun-oauth`) is a deprecated alias.
+- `SessionManager.setBeforeAppendMessage(hook)`: a hook that `appendMessage()` runs before storing each message. It
+  can replace or skip the message, and may itself append messages ahead of it. `appendMessage()` returns `undefined`
+  for a skipped message.
+- The session tree semantics (append-only entries, `getBranch()`, `branch()`, `resetLeaf()`) are documented as
+  guaranteed in the `SessionManager` TSDoc.
+
 ## Exports
 
 | Specifier | Contents |

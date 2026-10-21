@@ -841,6 +841,15 @@ async function listSessionsFromDir(
 	return sessions;
 }
 
+/** A message accepted by {@link SessionManager.appendMessage}. */
+export type AppendableMessage = Message | CustomMessage | BashExecutionMessage;
+
+/**
+ * Hook run by {@link SessionManager.appendMessage} before a message is stored.
+ * Return the message to store (the same object or a replacement), or `undefined` to skip it.
+ */
+export type BeforeAppendMessageHook = (message: AppendableMessage) => AppendableMessage | undefined;
+
 /**
  * Manages conversation sessions as append-only trees stored in JSONL files.
  *
@@ -851,16 +860,17 @@ async function listSessionsFromDir(
  *
  * Use buildSessionContext() to get the resolved message list for the LLM, which
  * handles compaction summaries and follows the path from root to current leaf.
+ *
+ * Guaranteed semantics, which callers may rely on to rewrite a session's active path:
+ * - Entries are never modified or deleted; the file only grows (apart from a one-time format migration
+ *   when an older session file is opened).
+ * - getBranch() returns the entries from the root to the leaf (or to the given entry), in order.
+ * - branch(id) and resetLeaf() only move the leaf pointer. The next append*() call creates a child of
+ *   that entry (or a new root), and buildSessionContext() then follows the new path, so re-appending
+ *   modified copies of entries after branch() replaces them in the active context.
+ * - A session opened from an existing file appends to that file; one with no file yet writes it on the
+ *   first assistant message.
  */
-/** A message accepted by {@link SessionManager.appendMessage}. */
-export type AppendableMessage = Message | CustomMessage | BashExecutionMessage;
-
-/**
- * Hook run by {@link SessionManager.appendMessage} before a message is stored.
- * Return the message to store (the same object or a replacement), or `undefined` to skip it.
- */
-export type BeforeAppendMessageHook = (message: AppendableMessage) => AppendableMessage | undefined;
-
 export class SessionManager {
 	private sessionId: string = "";
 	private sessionFile: string | undefined;
