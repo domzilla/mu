@@ -10,16 +10,6 @@ keeps pi's model layer, agent loop and session runtime and drops the interactive
 - `src/ai`, `src/agent-core` and `src/coding-agent` correspond to the pi packages pi-ai, pi-agent-core and
   pi-coding-agent.
 
-## Differences from pi
-
-- **Removed:** the CLI, all run modes, the TUI and themes, the package manager, HTML export, the agent harness,
-  telemetry, image generation, and loading extensions from disk (extensions are in-process factories only).
-- **Providers:** only the `anthropic-messages`, `openai-responses` and `openai-codex-responses` APIs ship. All other
-  providers stay in the model catalog, but requests to them fail with `API "<api>" is not available in mu`. Only the
-  `anthropic` and `openai-codex` OAuth flows ship.
-- **Added:** `registerOAuthFlows()` (static OAuth registration for bundled builds) and
-  `SessionManager.setBeforeAppendMessage()`.
-
 ## Model catalog
 
 The catalogs of the usable providers (`anthropic`, `openai`, `openai-codex`) are synced from published pi-ai
